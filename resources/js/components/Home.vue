@@ -8,12 +8,12 @@
                 <p class="control has-icons-left">
                 <input class="input is-small" type="text" placeholder="search">
                 <span class="icon is-small is-left">
-                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <i class="fa fa-search" aria-hidden="true"></i>
                 </span>
                 </p>
             </div>
-            <a class="panel-block is-active">
-                <span class="column is-9">Contact</span>
+            <a class="panel-block is-active" v-for="item,key in phonebook">
+                <span class="column is-9">{{item.name}}</span>
                 <span class="panel-icon column is-1">
                     <i class="has-text-primary fa fa-eye" aria-hidden="true"></i>
                 </span>
@@ -40,8 +40,18 @@
         components: {Add},
         data() {
             return {
-                addActive : ''
+                addActive : '',
+                phonebook: {}
             }
+        },
+        mounted() {
+            axios.get('/phonebook', this.$data.list)
+            .then((response) =>
+                this.phonebook = response.data
+            )
+            .catch((error) =>
+                this.errors = error.response.data.errors
+            );
         },
         methods: {
             openAdd() {

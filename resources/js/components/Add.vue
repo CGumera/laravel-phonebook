@@ -7,10 +7,30 @@
                 <button class="delete" aria-label="close" @click="closeModal"></button>
             </header>
             <section class="modal-card-body">
-            <!-- Content ... -->
+            <div class="field">
+                <label class="label">Name</label>
+                <div class="control">
+                    <input class="input" :class="{'is-danger':errors.name}" type="text" placeholder="Name" v-model="contact.name">
+                </div>
+                <span v-if="errors.name" class="has-text-danger">{{errors.name[0]}}</span>
+            </div>
+            <div class="field">
+                <label class="label">Phone</label>
+                <div class="control">
+                    <input class="input" :class="{'is-danger':errors.phone}" type="text" placeholder="Phone" v-model="contact.phone">
+                </div>
+                <span v-if="errors.phone" class="has-text-danger">{{errors.phone[0]}}</span>
+            </div>
+            <div class="field">
+                <label class="label">Email</label>
+                <div class="control">
+                    <input class="input" :class="{'is-danger':errors.email}" type="email" placeholder="Email" v-model="contact.email">
+                </div>
+                <span v-if="errors.email" class="has-text-danger">{{errors.email[0]}}</span>
+            </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-success">Save changes</button>
+                <button class="button is-success" @click="save">Save changes</button>
                 <button class="button" @click="closeModal">Cancel</button>
             </footer>
         </div>
@@ -19,9 +39,28 @@
 <script>
     export default {
         props:['openmodal'],
+        data() {
+            return {
+                contact: {
+                    name: '',
+                    phone: '',
+                    email: ''
+                },
+                errors: {}
+            }
+        },
         methods: {
             closeModal() {
                 this.$emit('closeModal');
+            },
+            save() {
+                axios.post('/phonebook', this.$data.contact)
+                .then((response) =>
+                    this.closeModal()
+                )
+                .catch((error) =>
+                    this.errors = error.response.data.errors
+                );
             }
         }
     }
